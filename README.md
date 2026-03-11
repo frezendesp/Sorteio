@@ -1,38 +1,51 @@
 # Sistema de Loterias Automático
 
-Scripts CLI para geração de jogos e análise estatística para Lotofácil, Mega-Sena e Lotomania.
+## lotofacil.py
 
-## Arquivos
+Fluxo recomendado:
 
-- `loteria.py`: gera jogos com filtros (`p` paridade, `m` moldura, `r` primos), evita repetições históricas e exporta `txt/json`.
-- `stats.py`: sincroniza resultados pela API, gera snapshots de filtros/estatísticas e valida blocos já gerados.
-
-## Exemplos
-
+1. Gerar bloco em buffer
 ```bash
-python3 loteria.py -lf -f p7 m8 -q 5 -o txt --save
-python3 loteria.py -ms -q 30 -o json
-python3 stats.py -sync --history 300 -check
-python3 stats.py -h 100 -prime-stats -g lotofacil
+python3 lotofacil.py -f p5 m9 s190-220 -q 24 --fechamento 14 --optimize --buffer
+```
+2. Visualizar bloco em matriz ANSI 5x5
+```bash
+python3 lotofacil.py --view --view-source buffer
+# ou por ID
+python3 lotofacil.py --view --view-id 3 --view-source buffer
+```
+3. Commit do buffer para histórico de jogados
+```bash
+python3 lotofacil.py --commit 3
+```
+4. Auditoria do último bloco jogado contra API oficial
+```bash
+python3 lotofacil.py --check-last
 ```
 
-## Dados locais
+### Filtros suportados
+- `mN` Moldura
+- `cN` Centro
+- `+N` Cruz
+- `xN` X
+- `pN` Primos
+- `fN` Fibonacci
+- `sMIN-MAX` ou `sN` Soma
+- `vN` Vazios consecutivos máximos por linha/coluna
+- `eN` Pares (extra)
 
-Os dados são persistidos automaticamente em `data/`:
+## stats.py
 
-- `results.json`
-- `generated_blocks.json`
-- `filters_history.json`
-
-
-### Estatística de primos por sorteio
-
-Para ver quantos números primos saíram em cada sorteio dos últimos 100 concursos:
+Exemplos:
 
 ```bash
+python3 stats.py -sync -h 300
 python3 stats.py -h 100 -prime-stats -g lotofacil
+python3 stats.py --create-group Preset_A p5 m9 s190-220
+python3 stats.py --ciclo
+python3 stats.py --affinity 3 -g lotofacil -h 200
+python3 stats.py --coverage 3
+python3 stats.py --backtest 3 -h 120
 ```
 
-Campos úteis no JSON:
-- `draws[*].prime_count`: quantidade de primos naquele sorteio.
-- `distribution`: frequência agregada (ex.: quantos sorteios tiveram 4 primos, 5 primos etc.).
+Saídas são em JSON para facilitar automação.
