@@ -147,12 +147,46 @@ def check_blocks() -> None:
     print(json.dumps({"checks": report}, ensure_ascii=False))
 
 
+def prime_stats_per_draw(game_name: str, history: int) -> None:
+    db = load_json(RESULTS_PATH)
+    draws = db.get(game_name, [])
+    if not draws:
+        print(json.dumps({"game": game_name, "history": history, "draws": [], "distribution": {}}, ensure_ascii=False))
+        return
+
+    limited = draws[-history:] if history > 0 else draws
+    per_draw = []
+    distribution = Counter()
+
+    for idx, draw in enumerate(limited, start=1):
+        prime_count = sum(1 for n in draw if is_prime(n))
+        distribution[prime_count] += 1
+        per_draw.append({"index": idx, "draw": sorted(draw), "prime_count": prime_count})
+
+    payload = {
+        "game": game_name,
+        "history": history,
+        "analyzed_draws": len(limited),
+        "distribution": dict(sorted(distribution.items())),
+        "draws": per_draw,
+    }
+    print(json.dumps(payload, ensure_ascii=False))
+
+
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Sincroniza dados e calcula estatísticas de loterias", add_help=False)
     p.add_argument("--help", action="help", help="Mostra esta ajuda e sai")
     p.add_argument("-h", "--history", type=int, default=200, dest="history", help="Quantidade de concursos para cálculo")
     p.add_argument("-sync", action="store_true", help="Sincroniza base local via API")
     p.add_argument("-check", action="store_true", help="Valida blocos antigos")
+    p.add_argument("-prime-stats", action="store_true", help="Exibe primos por sorteio no histórico selecionado")
+    p.add_argument(
+        "-g",
+        "--game",
+        choices=["lotofacil", "megasena", "lotomania"],
+        default="lotofacil",
+        help="Modalidade usada em -prime-stats",
+    )
     return p
 
 
@@ -167,6 +201,9 @@ def main() -> None:
 
     if args.check:
         check_blocks()
+
+    if args.prime_stats:
+        prime_stats_per_draw(args.game, args.history)
 
 
 if __name__ == "__main__":
