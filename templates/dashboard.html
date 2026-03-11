@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <form method="post" action="/forcar-geracao">
+    <button type="submit">Forçar Geração</button>
+  </form>
+</div>
+<div class="kpi">
+  <div class="k"><strong>Blocos (30d)</strong><br>{{ kpis.blocks_30d }}</div>
+  <div class="k"><strong>Jogos (30d)</strong><br>{{ kpis.games_30d }}</div>
+  <div class="k"><strong>Prêmios 14</strong><br>{{ kpis.premios_14 }}</div>
+  <div class="k"><strong>Prêmios 15</strong><br>{{ kpis.premios_15 }}</div>
+  <div class="k"><strong>Média melhor acerto</strong><br>{{ kpis.media_melhor_acerto }}</div>
+</div>
+{% endblock %}

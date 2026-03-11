@@ -1,51 +1,81 @@
-# Sistema de Loterias Automático
+# Sistema Web Local de Loterias (Flask)
 
-## lotofacil.py
+Aplicação web local (`localhost`) para geração, visualização, conferência e gestão de estratégia da Lotofácil.
 
-Fluxo recomendado:
+## Funcionalidades
 
-1. Gerar bloco em buffer
-```bash
-python3 lotofacil.py -f p5 m9 s190-220 -q 24 --fechamento 14 --optimize --buffer
-```
-2. Visualizar bloco em matriz ANSI 5x5
-```bash
-python3 lotofacil.py --view --view-source buffer
-# ou por ID
-python3 lotofacil.py --view --view-id 3 --view-source buffer
-```
-3. Commit do buffer para histórico de jogados
-```bash
-python3 lotofacil.py --commit 3
-```
-4. Auditoria do último bloco jogado contra API oficial
-```bash
-python3 lotofacil.py --check-last
-```
+- Dashboard com KPIs dos últimos 30 dias.
+- Rota `/hoje` com grelha 5x5 por jogo e destaque de filtros (Primos, Moldura, Fibonacci).
+- Histórico paginado em `/historico` com status e pontuação.
+- Edição de estratégia (`filter_groups.json`) em `/estrategia`.
+- Botão **Forçar Geração** no dashboard.
+- Sincronização automática do último resultado e validação de blocos pendentes no startup.
+- Tarefa em background com APScheduler para atualização periódica.
+- Persistência total em JSON compatível com a base anterior (`data/*.json`).
 
-### Filtros suportados
-- `mN` Moldura
-- `cN` Centro
-- `+N` Cruz
-- `xN` X
-- `pN` Primos
-- `fN` Fibonacci
-- `sMIN-MAX` ou `sN` Soma
-- `vN` Vazios consecutivos máximos por linha/coluna
-- `eN` Pares (extra)
-
-## stats.py
-
-Exemplos:
+## Instalação
 
 ```bash
-python3 stats.py -sync -h 300
-python3 stats.py -h 100 -prime-stats -g lotofacil
-python3 stats.py --create-group Preset_A p5 m9 s190-220
-python3 stats.py --ciclo
-python3 stats.py --affinity 3 -g lotofacil -h 200
-python3 stats.py --coverage 3
-python3 stats.py --backtest 3 -h 120
+python -m pip install flask requests apscheduler
 ```
 
-Saídas são em JSON para facilitar automação.
+## Execução local
+
+```bash
+python app.py
+```
+
+A aplicação sobe em:
+- `http://127.0.0.1:5000`
+
+## DNS local via hosts (Windows)
+
+Editar `C:\Windows\System32\drivers\etc\hosts` (como administrador) e adicionar:
+
+```txt
+127.0.0.1 loterias.local
+```
+
+Depois aceda por:
+- `http://loterias.local:5000`
+
+## Serviço no Windows (arranque automático)
+
+Uma forma prática é usar **NSSM**:
+
+1. Instalar NSSM.
+2. Criar serviço:
+   ```powershell
+   nssm install LoteriasLocal "C:\Python312\python.exe" "C:\caminho\projeto\app.py"
+   ```
+3. Definir diretório de trabalho para a pasta do projeto.
+4. Iniciar serviço:
+   ```powershell
+   nssm start LoteriasLocal
+   ```
+
+Alternativa sem NSSM: Agendador de Tarefas no logon do sistema, com execução de `python app.py`.
+
+## Estrutura
+
+- `app.py`: servidor Flask + motor de geração + validação + scheduler.
+- `templates/`: páginas HTML (dark mode).
+- `data/results.json`: resultados sincronizados.
+- `data/played_blocks.json`: blocos gerados/jogados e conferência.
+- `data/buffer_blocks.json`: compatibilidade legada.
+- `data/filter_groups.json`: presets editáveis no browser.
+
+## Estratégia padrão
+
+`filter_groups.json` inicia com preset `default`, usado pelo botão **Forçar Geração**.
+
+Exemplo:
+
+```json
+{
+  "default": {
+    "filters": ["m9", "p5", "f4", "s180-220", "e7", "r8", "a15"],
+    "quantity": 12
+  }
+}
+```

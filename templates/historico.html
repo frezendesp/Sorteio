@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+<table>
+  <thead><tr><th>ID</th><th>Criado</th><th>Jogos</th><th>Status</th><th>Melhor</th><th>Prêmios 11-15</th></tr></thead>
+  <tbody>
+    {% for b in blocks %}
+    <tr>
+      <td>{{ b.id }}</td>
+      <td>{{ b.created_at }}</td>
+      <td>{{ b.games|length }}</td>
+      <td>{{ 'Conferido' if b.checked else 'Pendente' }}</td>
+      <td>{{ b.best_hit }}</td>
+      <td>{{ b.awards }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<div style="margin-top:12px;">
+  {% if page > 1 %}<a href="/historico?page={{ page-1 }}">&laquo; anterior</a>{% endif %}
+  <span> página {{ page }} / {{ total_pages }} </span>
+  {% if page < total_pages %}<a href="/historico?page={{ page+1 }}">próxima &raquo;</a>{% endif %}
+</div>
+</div>
+{% endblock %}

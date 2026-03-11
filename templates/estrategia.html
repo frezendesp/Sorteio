@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card">
+  <h3>Edição de Estratégia (filter_groups.json)</h3>
+  {% if msg %}<p>{{ msg }}</p>{% endif %}
+  <form method="post">
+    <textarea name="json_content">{{ json_content }}</textarea>
+    <div style="margin-top:10px;"><button type="submit">Salvar Estratégia</button></div>
+  </form>
+</div>
+{% endblock %}
