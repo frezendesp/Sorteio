@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+{% if not blocks %}
+<div class="card">Nenhum bloco criado hoje.</div>
+{% endif %}
+{% for block in blocks %}
+<div class="card">
+  <h3>Bloco #{{ block.id }} | filtros: {{ block.filters|join(' ') }}</h3>
+  <p>Status: {{ 'Conferido' if block.checked else 'Pendente' }} | Melhor acerto: {{ block.best_hit }}</p>
+  {% for game in block.games %}
+  <div class="grid" style="margin-bottom:10px;">
+    {% for n in range(1,26) %}
+      {% set selected = n in game %}
+      <div class="n {% if selected %}on{% endif %} {% if selected and n in primos %}prime{% endif %} {% if selected and n in moldura %}moldura{% endif %} {% if selected and n in fibonacci %}fibo{% endif %}">
+        {% if selected %}{{ '%02d' % n }}{% else %}..{% endif %}
+      </div>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}

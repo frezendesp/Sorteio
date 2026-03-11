@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loterias Local</title>
+  <style>
+    body { background:#0f1115; color:#e5e7eb; font-family:Arial,sans-serif; margin:0; }
+    .wrap { max-width:1100px; margin:0 auto; padding:20px; }
+    a { color:#93c5fd; text-decoration:none; }
+    nav { display:flex; gap:14px; margin-bottom:18px; }
+    .card { background:#1b1f27; border:1px solid #2d3340; border-radius:10px; padding:14px; margin-bottom:14px; }
+    .kpi { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
+    .k { background:#131722; padding:12px; border-radius:8px; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { border-bottom:1px solid #2d3340; padding:8px; text-align:left; }
+    textarea { width:100%; min-height:320px; background:#0b0f18; color:#d1d5db; border:1px solid #2d3340; }
+    button { background:#2563eb; color:white; border:0; padding:10px 14px; border-radius:8px; cursor:pointer; }
+    .grid { display:grid; grid-template-columns:repeat(5, 34px); gap:6px; }
+    .n { display:flex; align-items:center; justify-content:center; height:34px; border-radius:6px; background:#111827; font-size:12px; }
+    .on { background:#374151; font-weight:700; }
+    .prime { outline:2px solid #22c55e; }
+    .moldura { background:#1e3a8a; }
+    .fibo { color:#f472b6; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Loterias Local</h1>
+    <nav>
+      <a href="/">Dashboard</a>
+      <a href="/hoje">Hoje</a>
+      <a href="/historico">Histórico</a>
+      <a href="/estrategia">Estratégia</a>
+    </nav>
+    {% block content %}{% endblock %}
+  </div>
+</body>
+</html>
